@@ -1,5 +1,5 @@
 FROM golang:alpine AS builder
-COPY . /app
+COPY whoami.go /app/
 WORKDIR /app
 RUN go build -o whoami
 
