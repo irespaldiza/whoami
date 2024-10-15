@@ -12,11 +12,21 @@ func main() {
 	if port == "" {
 		port = "8080"
 	}
-	fmt.Fprintf(os.Stdout, "Listening on :%s\n", port)
-	hostname, _ := os.Hostname()
+
+	hostname, err := os.Hostname()
+	if err != nil {
+		log.Fatalf("Error obteniendo el hostname: %v", err)
+	}
+	log.Printf("Listening on :%s\n", port)
+
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "This is the pod %s\n", hostname)
+		_, err := fmt.Fprintf(w, "This is the pod %s\n", hostname)
+		if err != nil {
+			log.Printf("Error escribiendo la respuesta: %v", err)
+		}
 	})
 
-	log.Fatal(http.ListenAndServe(":"+port, nil))
+	if err := http.ListenAndServe(":"+port, nil); err != nil {
+		log.Fatalf("Error al iniciar el servidor: %v", err)
+	}
 }
